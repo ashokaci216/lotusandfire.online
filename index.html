@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta name="description" content="Lotus & Fire – Belapur | Asian Restaurant | Online Ordering & Table Booking" />
+
+  <title>Lotus & Fire – Belapur</title>
+
+   <!-- Google Font: Inter (for category & UI text) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.webmanifest" />
+
+  <!-- Main Styles -->
+  <link
+  rel="preload"
+  href="css/style.css?v=24"
+  as="style"
+  onload="this.onload=null;this.rel='stylesheet'"
+>
+
+<noscript>
+  <link rel="stylesheet" href="css/style.css?v=24">
+</noscript>
+
+
+  <!-- iOS PWA hint -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+</head>
+
+  <!-- ✅ SECTION 0: SPLASH (shows once per session) -->
+  <div id="splash" class="splash" aria-hidden="true">
+    <div class="splash-inner">
+      <div class="splash-logo">Lotus &amp; Fire</div>
+      <div class="splash-sub">ASIAN RESTAURANT</div>
+      <div class="splash-loc">CBD Belapur • Navi Mumbai</div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="brand" href="#top" aria-label="Go to top">
+  <img src="images/logo.png" alt="Lotus & Fire Logo" class="brand-logo" />
+
+  <span class="brand-text">
+    <span class="brand-name">Lotus &amp; Fire</span>
+    <span class="brand-area">Belapur</span>
+  </span>
+</a>
+    </div>
+
+    <div class="topbar-right">
+      <button id="btn-whatsapp-top" class="iconbtn" aria-label="WhatsApp">
+        💬
+      </button>
+
+      <button id="btn-cart" class="iconbtn cartbtn" aria-label="Cart">
+        🛒 <span id="cart-count" class="badge">0</span>
+      </button>
+
+      <button id="btn-menu" class="iconbtn" aria-label="Menu">
+        ☰
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Nav -->
+  <nav id="mobile-nav" class="mobile-nav" aria-hidden="true">
+    <a href="#about" class="navlink">About</a>
+    <a href="#menu" class="navlink">Menu</a>
+    <a href="#gallery" class="navlink">Gallery</a>
+    <a href="#book" class="navlink">Book Table</a>
+    <a href="#contact" class="navlink">Contact</a>
+  </nav>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-bg">
+        <img src="images/hero.jpg" alt="Lotus & Fire ambience" loading="lazy" decoding="async" />
+      </div>
+
+      <div class="hero-content">
+        <h1>Lotus &amp; Fire</h1>
+        <p class="hero-tag">Asian Restaurant</p>
+
+        <div class="hero-cta">
+          <a class="btn primary" href="#menu">Online Order</a>
+          <button id="btn-call" class="btn">Reserve Table</button>
+         <button id="btn-directions" class="btn">Offers</button>
+        </div>
+
+        <div class="hero-time">
+          <div>12:00 PM – 3:30 PM</div>
+          <div>7:00 PM – 12:00 AM</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section">
+      <div class="wrap">
+        <h2>About Lotus &amp; Fire</h2>
+        <p class="muted">
+          A refined Asian dining experience in CBD Belapur, blending crafted flavours, warm ambience, and seamless dine-in, pickup and delivery.
+        </p>
+
+        <div class="chips">
+          <span class="chip">Premium Ambience</span>
+          <span class="chip">Budget-Friendly</span>
+          <span class="chip">Dine-in • Pickup • Delivery</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ✅ TODAY’S OFFER (replaces BOGO) -->
+    <section id="today-offer" class="section offer-section hidden">
+      <div class="wrap">
+        <div class="offer-head">
+          <h2>Today’s Offer <span class="tiny">(Delivery Only)</span></h2>
+          <div class="offer-note">Not combinable with any other discount • Offer items don’t get extra 20% delivery discount</div>
+        </div>
+
+        <div id="offer-grid" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- Menu -->
+    <section id="menu" class="section">
+      <div class="wrap">
+        <div class="menu-top">
+          <h2>Menu</h2>
+
+          <div class="order-type">
+            <button class="pill active" data-order="delivery" id="pill-delivery">Delivery</button>
+            <button class="pill" data-order="pickup" id="pill-pickup">Pickup</button>
+          </div>
+        </div>
+
+        <div class="searchbar">
+          <input id="search" type="search" placeholder="Search dishes..." autocomplete="off" />
+        </div>
+
+        <div id="category-tabs" class="tabs"></div>
+        <div id="menu-accordion" class="accordion"></div>
+      </div>
+    </section>
+    
+<!-- Gallery -->
+<section id="gallery" class="section">
+  <div class="wrap">
+    <h2>Gallery</h2>
+
+    <div class="gallery">
+
+      <img src="images/gallery-1.jpg"
+           alt="Chicken Lollipop Platter"
+           data-name="Chicken Lollipop Platter"
+           data-desc="Crispy chicken lollipops, freshly fried and served hot."
+           loading="lazy" decoding="async" />
+
+      <img src="images/gallery-2.jpg"
+           alt="Burnt Chicken"
+           data-name="Burnt Chicken"
+           data-desc="Wok-tossed chicken with intense heat and bold flavours."
+           loading="lazy" decoding="async" />
+
+      <img src="images/gallery-3.jpg"
+           alt="Butter Pepper Garlic Fish"
+           data-name="Butter Pepper Garlic Fish"
+           data-desc="Golden fried fish tossed in butter, pepper, and garlic."
+           loading="lazy" decoding="async" />
+
+      <img src="images/gallery-4.jpg"
+           alt="Kung Pao Chicken Lollipop"
+           data-name="Kung Pao Chicken Lollipop"
+           data-desc="Chicken lollipops glazed in sweet and spicy kung pao sauce."
+           loading="lazy" decoding="async" />
+
+      <img src="images/gallery-5.jpg"
+           alt="Burnt Chilly Chicken Rice"
+           data-name="Burnt Chilly Chicken Rice"
+           data-desc="Wok-fired rice tossed with chilli chicken and aromatics."
+           loading="lazy" decoding="async" />
+
+      <img src="images/gallery-flame.jpg"
+           alt="Live Kitchen Wok Flame"
+           data-name="Live Kitchen Wok Flame"
+           data-desc="Wok-fired cooking with live flame for bold, authentic flavours."
+           loading="lazy"
+           decoding="async" />
+
+    </div>
+  </div>
+</section>
+
+    <!-- Book Table -->
+    <section id="book" class="section">
+      <div class="wrap">
+        <h2>Book a Table</h2>
+
+        <div class="card">
+          <h3>WhatsApp Booking</h3>
+          <form id="booking-form" class="form">
+            <div class="row">
+              <input id="bk-name" placeholder="Full Name" required />
+              <input id="bk-phone" placeholder="Phone (10 digits)" inputmode="numeric" required />
+            </div>
+            <div class="row">
+              <input id="bk-date" type="date" required />
+              <input id="bk-time" type="time" required />
+            </div>
+            <div class="row">
+              <input id="bk-people" type="number" min="1" max="30" placeholder="Guests" required />
+              <input id="bk-note" placeholder="Notes (optional)" />
+            </div>
+            <button class="btn primary" type="submit">Send on WhatsApp</button>
+          </form>
+        </div>
+
+      <div class="card zoho-card hidden" id="zoho-form">
+        <h3>Zoho Form (Later)</h3>
+        <p class="muted">Placeholder — you can embed your Zoho booking form here later.</p>
+        <div class="zoho-placeholder">Zoho Booking Form Embed Here</div>
+      </div>
+
+    <!-- Contact + Offer Box (map removed) -->
+    <section id="contact" class="section">
+      <div class="wrap">
+        <h2>Contact</h2>
+
+        <div class="two-col">
+          <div class="card">
+            <h3>Lotus &amp; Fire – Belapur</h3>
+
+            <!-- ✅ Address & timings kept here only (not repeated everywhere) -->
+             <div id="offers" class="section"></div>
+              <p class="muted">
+                📧 Email: <a href="mailto:info@lotusandfire.online">info@lotusandfire.online</a>
+              </p>
+
+            <p class="muted">
+              Shop No. 35, Suncity CHS, Plot No. 62–63, Sector 15, CBD Belapur,<br />
+              Navi Mumbai, Maharashtra – 400614
+            </p>
+
+            <p class="muted">
+              Timings: 12:00 PM – 3:30 PM • 7:00 PM – 12:00 AM
+            </p>
+
+            <div class="btnrow">
+              <button id="btn-whatsapp-contact" class="btn primary">WhatsApp</button>
+              <button id="btn-call-contact" class="btn">Call</button>
+              <button id="btn-directions-contact" class="btn">Directions</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Website Exclusive Offers</h3>
+
+            <div class="offer-box">
+              <div class="offer-block">
+                <div class="offer-title">Website Ordering – Delivery Only</div>
+                <ul>
+                  <li>Flat 20% OFF</li>
+                  <li>25% OFF above ₹3,000</li>
+                  <li>30% OFF above ₹5,000</li>
+                  <li>40% OFF above ₹10,000</li>
+                </ul>
+              </div>
+
+              <div class="offer-block">
+                <div class="offer-title">Website Table Booking</div>
+                <ul>
+                  <li>Flat 20% OFF on food bill</li>
+                  <li>Valid only for website bookings</li>
+                </ul>
+              </div>
+
+              <div class="offer-foot">Note: Not combinable with other discounts</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+   <!-- Footer -->
+<footer class="footer">
+  <div class="wrap footer-row">
+    <div>
+      © <span id="year"></span> Lotus &amp; Fire – Belapur
+      <div class="muted">Asian Restaurant</div>
+    </div>
+
+    <div class="muted site-credit">
+      Site by <a href="https://ashokrasali.com" target="_blank" rel="noopener">ashokrasali.com</a>
+    </div>
+  </div>
+</footer>
+
+  </main>
+
+  <!-- Floating Cart Bar -->
+  <div id="cart-bar" class="cart-bar hidden">
+    <button id="cart-bar-open" class="cart-bar-btn">
+      🛒 <span id="cart-bar-items">0 items</span>
+      <span id="cart-bar-total">₹0</span>
+    </button>
+  </div>
+
+  <!-- Slide Cart Drawer -->
+  <aside id="cart-drawer" class="cart-drawer" aria-hidden="true">
+    <div class="cart-head">
+      <div class="cart-title">Your Cart</div>
+      <button id="cart-close" class="iconbtn" aria-label="Close cart">✕</button>
+    </div>
+
+    <div class="cart-body">
+      <div id="cart-items" class="cart-items"></div>
+
+      <div class="cart-summary">
+        <div class="sumrow"><span>Subtotal</span><span id="sum-subtotal">₹0</span></div>
+        <div class="sumrow"><span>Discount</span><span id="sum-discount">-₹0</span></div>
+        <div class="sumrow"><span>GST (5%)</span><span id="sum-gst">₹0</span></div>
+        <div class="sumrow total"><span>Total</span><span id="sum-total">₹0</span></div>
+      </div>
+
+      <div class="cart-form">
+        <label class="lbl">Notes (optional)</label>
+        <textarea id="order-notes" rows="2" placeholder="Any special request..."></textarea>
+
+        <label class="lbl">Full Name & Address</label>
+        <textarea id="order-name-address" rows="3" placeholder="Example: Ashok, Flat 101, Sector 15, Belapur" required></textarea>
+
+        <button id="btn-wa-order" class="btn primary full">Send Order on WhatsApp</button>
+        <button id="btn-clear-cart" class="btn full">Clear Cart</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ✅ IMAGE MODAL (menu item preview) -->
+  <div id="modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+
+      <div class="modal-media">
+        <img id="modal-img" alt="Dish image" loading="lazy" decoding="async" />
+      </div>
+
+      <div class="modal-info">
+        <div class="modal-title">
+          <div>
+            <div id="modal-name" class="mname"></div>
+            <div id="modal-desc" class="mdesc"></div>
+          </div>
+
+          <div class="mprice">
+            <span id="modal-dot" class="dot"></span>
+            <span id="modal-price"></span>
+          </div>
+        </div>
+
+        <div class="modal-actions" id="modal-actions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js?v=24" defer></script>
+  <!-- Gallery Modal -->
+<div id="galleryModal" class="gmodal" aria-hidden="true">
+  <div class="gmodal-backdrop" data-close="true"></div>
+
+  <div class="gmodal-card" role="dialog" aria-modal="true" aria-label="Gallery image preview">
+    <button class="gmodal-close" type="button" aria-label="Close" data-close="true">✕</button>
+
+    <img id="gmodalImg" src="" alt="" />
+
+    <div class="gmodal-meta">
+      <div id="gmodalName" class="gmodal-name"></div>
+      <div id="gmodalDesc" class="gmodal-desc"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
