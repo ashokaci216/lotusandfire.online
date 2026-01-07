@@ -39,7 +39,7 @@
       "name": "Chicken Lollipop",
       "desc": "Classic crispy chicken wings — bone-in, neatly cut at the bone and fried to perfection.",
       "veg": false,
-      "image": "images/chicken-starters/chicken-lollipop.jpg",
+      "image": "/images/chicken-starters/chicken-lollipop.jpg",
       "originalPrice": 239,
       "offerPrice": 139
     }
