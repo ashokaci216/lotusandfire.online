@@ -72,26 +72,34 @@
   }
 
   function computeBill() {
-    const gstPercent = Number(STATE.menu?.tax?.gstPercent || 0);
+  const gstPercent = Number(STATE.menu?.tax?.gstPercent || 0);
 
-    const subTotal = cartSubtotal();
-    const normalSub = normalSubtotal();
-    const offerSub = offerSubtotal();
+  const subTotal = cartSubtotal();
+  const normalSub = normalSubtotal();
+  const offerSub = offerSubtotal();
 
-    let discount = 0;
+  let discount = 0;
 
-    if (STATE.orderType === "delivery") {
-      const pct = getDeliveryDiscountPercentForNormalItems(normalSub);
-      discount = Math.round(normalSub * (pct / 100));
-      // offer items do not get extra discount (already offer price)
-    }
-
-    const afterDiscount = Math.max(0, subTotal - discount);
-    const gst = Math.round(afterDiscount * (gstPercent / 100));
-    const total = afterDiscount + gst;
-
-    return { subTotal, normalSub, offerSub, discount, gst, total };
+  if (STATE.orderType === "delivery") {
+    const pct = getDeliveryDiscountPercentForNormalItems(normalSub);
+    discount = Math.round(normalSub * (pct / 100));
+    // offer items do not get extra discount (already offer price)
   }
+
+  const afterDiscount = Math.max(0, subTotal - discount);
+  const gst = Math.round(afterDiscount * (gstPercent / 100));
+  const total = afterDiscount + gst; // base total before delivery fee
+
+  // ✅ Delivery Fee Rule: ₹50 only when Delivery AND total < 200
+  let deliveryFee = 0;
+  if (STATE.orderType === "delivery" && total < 200) {
+    deliveryFee = 50;
+  }
+
+  const grandTotal = total + deliveryFee;
+
+  return { subTotal, normalSub, offerSub, discount, gst, total, deliveryFee, grandTotal };
+}
 
   function setupSplash() {
     const splash = qs("#splash");
@@ -643,17 +651,39 @@ function normalizeOfferRules() {
     const barItems = qs("#cart-bar-items");
     const barTotal = qs("#cart-bar-total");
     if (barItems) barItems.textContent = count + " items";
-    if (barTotal) barTotal.textContent = money(bill.total);
+    if (barTotal) barTotal.textContent = money(bill.grandTotal); // 🔁 use grandTotal
 
     const s1 = qs("#sum-subtotal");
     const s2 = qs("#sum-discount");
     const s3 = qs("#sum-gst");
+    const s5 = qs("#sum-delivery"); // NEW
     const s4 = qs("#sum-total");
 
     if (s1) s1.textContent = money(bill.subTotal);
     if (s2) s2.textContent = "-" + money(bill.discount);
     if (s3) s3.textContent = money(bill.gst);
-    if (s4) s4.textContent = money(bill.total);
+    if (s5) s5.textContent = money(bill.deliveryFee); // NEW
+    if (s4) s4.textContent = money(bill.grandTotal);  // 🔁 use grandTotal
+
+    const tip = qs("#delivery-tip");
+if (tip) {
+  if (count > 0 && STATE.orderType === "delivery" && bill.total < 200) {
+    tip.textContent = `➕ Add ₹${200 - bill.total} to get delivery free on ₹200+ orders.`;
+  } else {
+    tip.textContent = "";
+  }
+}
+
+// ✅ Empty cart: no delivery fee, no tip, total must be ₹0
+if (count === 0) {
+  const s5 = qs("#sum-delivery");
+  const s4 = qs("#sum-total");
+  if (s5) s5.textContent = money(0);
+  if (s4) s4.textContent = money(0);
+
+  const tip = qs("#delivery-tip");
+  if (tip) tip.textContent = "";
+}
 
     renderCartItems();
   }
@@ -705,7 +735,8 @@ function normalizeOfferRules() {
     lines.push("Subtotal: " + money(bill.subTotal));
     lines.push("Discount: -" + money(bill.discount));
     lines.push("GST (5%): " + money(bill.gst));
-    lines.push("*Total: " + money(bill.total) + "*");
+    lines.push("Delivery Fee: " + money(bill.deliveryFee));          // NEW
+    lines.push("*Total Payable: " + money(bill.grandTotal) + "*");   // UPDATED
     lines.push("");
 
     const notes = qs("#order-notes")?.value?.trim() || "";
@@ -797,11 +828,13 @@ function normalizeOfferRules() {
   const subtotal = document.getElementById("subtotal");
   const discount = document.getElementById("discount");
   const gst = document.getElementById("gst");
+  const delivery = document.getElementById("sum-delivery"); // NEW
   const total = document.getElementById("total");
 
   if (subtotal) subtotal.textContent = "₹0";
   if (discount) discount.textContent = "₹0";
   if (gst) gst.textContent = "₹0";
+  if (delivery) delivery.textContent = "₹0"; // NEW
   if (total) total.textContent = "₹0";
 }
 

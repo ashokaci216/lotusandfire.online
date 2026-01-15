@@ -739,5 +739,12 @@ h3{font-size:16px}
   font: inherit;
 }
 
+.delivery-tip{
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+
 
 
