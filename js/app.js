@@ -18,6 +18,90 @@
   function qs(sel) { return document.querySelector(sel); }
   function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
 
+  // ==============================
+// ✅ Store Hours (Lotus & Fire)
+// Lunch: 12:00 PM – 3:30 PM
+// Dinner: 7:00 PM – 12:00 AM
+// ==============================
+function getStoreStatus(now = new Date()) {
+  const h = now.getHours();   // 0-23
+  const m = now.getMinutes(); // 0-59
+  const minutes = h * 60 + m;
+
+  const LUNCH_START = 12 * 60;        // 12:00
+  const LUNCH_END   = 15 * 60 + 30;   // 15:30
+  const DINNER_START = 19 * 60;       // 19:00
+  const DINNER_END   = 24 * 60;       // 24:00 (midnight)
+
+  const isLunchOpen  = minutes >= LUNCH_START && minutes < LUNCH_END;
+  const isDinnerOpen = minutes >= DINNER_START && minutes < DINNER_END;
+
+  const isOpen = isLunchOpen || isDinnerOpen;
+
+  let nextOpenText = "";
+  if (minutes < LUNCH_START) nextOpenText = "Closed now — Opens at 12:00 PM";
+  else if (minutes >= LUNCH_END && minutes < DINNER_START) nextOpenText = "Closed now — Opens at 7:00 PM";
+  else nextOpenText = "Closed now — Opens at 12:00 PM";
+
+  return { isOpen, nextOpenText, isLunchOpen, isDinnerOpen };
+}
+
+function updateStoreStatusLine() {
+  const status = getStoreStatus();
+  const el = document.getElementById("store-status");
+  if (!el) return;
+
+  if (status.isOpen) {
+    el.textContent = "Open now — Orders accepted";
+  } else {
+    el.innerHTML = status.nextOpenText.replace(
+      /(12:00 PM|7:00 PM)/,
+      "<strong>$1</strong>"
+    );
+  }
+}
+
+function applyStoreButtonState() {
+  const status = getStoreStatus();
+
+  document.querySelectorAll("button").forEach(btn => {
+    if (btn.textContent.trim() === "Add") {
+      btn.disabled = !status.isOpen;
+      btn.title = status.isOpen ? "" : status.nextOpenText;
+    }
+  });
+}
+
+function scheduleNextStoreRefresh() {
+  // Update UI now
+  updateStoreStatusLine();
+  applyStoreButtonState();
+
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const s = now.getSeconds();
+  const current = h * 3600 + m * 60 + s; // seconds since midnight
+
+  // Store boundary times (in seconds)
+  const LUNCH_START  = 12 * 3600;            // 12:00:00
+  const LUNCH_END    = 15 * 3600 + 30 * 60;  // 15:30:00
+  const DINNER_START = 19 * 3600;            // 19:00:00
+  const DINNER_END   = 24 * 3600;            // 24:00:00 (midnight)
+
+  const boundaries = [LUNCH_START, LUNCH_END, DINNER_START, DINNER_END];
+
+  // Find next boundary today, else tomorrow lunch start
+  let next = boundaries.find(t => t > current);
+  if (next == null) next = LUNCH_START + 24 * 3600; // tomorrow 12:00
+
+  // ms until next boundary + small buffer (1.2s) so clock ticks over
+  const msUntil = (next - current) * 1000 + 1200;
+
+  clearTimeout(window.__storeRefreshTimer);
+  window.__storeRefreshTimer = setTimeout(scheduleNextStoreRefresh, msUntil);
+}
+
   function money(n) {
     const v = Math.round(Number(n) || 0);
     return "₹" + v.toLocaleString("en-IN");
@@ -176,6 +260,13 @@ function toast(msg) {
 }
 
   function addToCart(item, delta) {
+    // ✅ Store Closed Guard (block add/remove when closed)
+  const status = getStoreStatus();
+  if (!status.isOpen) {
+    alert(status.nextOpenText);
+    return;
+  }
+
   const id = String(item.id);
   const existing = STATE.cart[id];
 
@@ -841,8 +932,17 @@ if (count === 0) {
 
   window.addEventListener("pageshow", () => {
   if (typeof renderMenu === "function") renderMenu();
+  scheduleNextStoreRefresh(); // ✅ auto updates at 12:00 / 3:30 / 7:00 / 12:00
   if (typeof updateCartBar === "function") updateCartBar();
 });
+
+  if (!window.__storeIntervalStarted) {
+  window.__storeIntervalStarted = true;
+  setInterval(() => {
+    updateStoreStatusLine();
+    applyStoreButtonState();
+  }, 60000);
+}
 
     // Mobile menu toggle
     const btnMenu = qs("#btn-menu");
