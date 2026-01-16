@@ -52,7 +52,7 @@ function updateStoreStatusLine() {
   if (!el) return;
 
   if (status.isOpen) {
-    el.textContent = "Open now — Orders accepted";
+    el.innerHTML = "<strong>Open now</strong> — Orders accepted";
   } else {
     el.innerHTML = status.nextOpenText.replace(
       /(12:00 PM|7:00 PM)/,
