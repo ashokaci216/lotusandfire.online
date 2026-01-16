@@ -750,6 +750,11 @@ button:disabled {
   opacity: 0.9;
 }
 
+#store-status strong {
+  font-weight: 600;
+}
+
+
 
 
 

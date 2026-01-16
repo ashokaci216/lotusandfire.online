@@ -979,35 +979,44 @@ if (count === 0) {
     qs("#cart-bar-open")?.addEventListener("click", openCart);
     qs("#cart-close")?.addEventListener("click", closeCart);
 
-    // Clear cart
+    // ✅ Cleanup cart AFTER WhatsApp order (same as Clear Cart)
+    function afterOrderCleanup() {
+    STATE.cart = {};
+    saveCart();
+    renderTodayOffer();
+    renderMenuAccordion();
+    updateCartUI();
+    }
+
+    // Clear cart (manual)
     qs("#btn-clear-cart")?.addEventListener("click", () => {
-      STATE.cart = {};
-      saveCart();
-      renderTodayOffer();
-      renderMenuAccordion();
-      updateCartUI();
-    });
+    afterOrderCleanup();
+  });
 
     // WhatsApp order
     qs("#btn-wa-order")?.addEventListener("click", () => {
-      if (cartCount() === 0) return alert("Cart is empty.");
-      const nameAddr = qs("#order-name-address")?.value?.trim() || "";
-      if (!nameAddr) return alert("Please enter Full Name & Address.");
-      goWhatsAppOrder(buildOrderMessage());
-    });
+    if (cartCount() === 0) return alert("Cart is empty.");
+    const nameAddr = qs("#order-name-address")?.value?.trim() || "";
+    if (!nameAddr) return alert("Please enter Full Name & Address.");
+
+    goWhatsAppOrder(buildOrderMessage());
+
+    // ✅ clear cart AFTER opening WhatsApp
+    afterOrderCleanup();
+  });
 
     // Booking form
     qs("#booking-form")?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      window.open(buildWhatsAppUrl(buildBookingMessage()), "_blank");
-    });
+    e.preventDefault();
+    window.open(buildWhatsAppUrl(buildBookingMessage()), "_blank");
+  });
 
     // Modal close
     qs("#modal-close")?.addEventListener("click", closeModal);
     qs("#modal-backdrop")?.addEventListener("click", closeModal);
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeModal();
-    });
+    if (e.key === "Escape") closeModal();
+  });
 
     // Footer year
     const y = qs("#year");
