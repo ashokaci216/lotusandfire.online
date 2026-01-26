@@ -806,7 +806,7 @@ if (count === 0) {
 
 // ✅ ADD THIS HERE
 const SHEET_WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbxmpVqWgsVXjquHVrL_a-t0lcTzMTaAjyt9Rcl8EIdI1eFfTa_Hs9xFlMLIOOLegfpV/exec";
+  "https://script.google.com/macros/s/AKfycbyK6vNlgh8KYsw0ux4kolN3iwek2FW3NKcbyn9GkNPt-H0SKvg8bIrVyigEuaoX4wr2/exec";
 
 
 function saveOrderToSheet(order) {
@@ -819,12 +819,6 @@ function saveOrderToSheet(order) {
 }
 
 // ❌ DO NOT break these two
-function buildWhatsAppUrl(text) {
-  const phone = String(STATE.menu?.contact?.whatsapp || "").replace(/[^\d+]/g, "");
-  const msg = encodeURIComponent(text);
-  return "https://wa.me/" + phone + "?text=" + msg;
-}
-
   function buildWhatsAppUrl(text) {
     const phone = String(STATE.menu?.contact?.whatsapp || "").replace(/[^\d+]/g, "");
     const msg = encodeURIComponent(text);
@@ -863,19 +857,22 @@ function buildWhatsAppUrl(text) {
   lines.push("*Total Payable: " + money(bill.grandTotal) + "*");
   lines.push("");
 
-  // ✅ NEW: Phone & Payment (from STATE)
+  // ✅ Phone & Payment (from STATE)
   const phone = STATE?.customer?.phone || "";
   const paymentMethod = STATE?.customer?.paymentMethod || "Cash";
-
   if (phone) lines.push("Phone: " + phone);
   lines.push("Payment Method: " + paymentMethod);
 
-  // Existing fields
+  // ✅ Notes + Name/Address (from form)
   const notes = qs("#order-notes")?.value?.trim() || "";
   const nameAddr = qs("#order-name-address")?.value?.trim() || "";
 
   if (notes) lines.push("Notes: " + notes);
-  if (nameAddr) lines.push("Name & Address: " + nameAddr);
+
+  if (nameAddr) {
+    const nameAddrWA = nameAddr.replace(/,\s*/g, "\n");
+    lines.push("Name & Address:\n" + nameAddrWA);
+  }
 
   return lines.join("\n");
 }
