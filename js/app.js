@@ -802,6 +802,29 @@ if (count === 0) {
     d.setAttribute("aria-hidden", "true");
   }
 
+  // STATE, constants, etc.
+
+// ✅ ADD THIS HERE
+const SHEET_WEBAPP_URL =
+  "https://script.google.com/macros/s/AKfycbxmpVqWgsVXjquHVrL_a-t0lcTzMTaAjyt9Rcl8EIdI1eFfTa_Hs9xFlMLIOOLegfpV/exec";
+
+
+function saveOrderToSheet(order) {
+  fetch(SHEET_WEBAPP_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(order),
+  });
+}
+
+// ❌ DO NOT break these two
+function buildWhatsAppUrl(text) {
+  const phone = String(STATE.menu?.contact?.whatsapp || "").replace(/[^\d+]/g, "");
+  const msg = encodeURIComponent(text);
+  return "https://wa.me/" + phone + "?text=" + msg;
+}
+
   function buildWhatsAppUrl(text) {
     const phone = String(STATE.menu?.contact?.whatsapp || "").replace(/[^\d+]/g, "");
     const msg = encodeURIComponent(text);
@@ -809,35 +832,53 @@ if (count === 0) {
   }
 
   function buildOrderMessage() {
-    const bill = computeBill();
-    const items = Object.values(STATE.cart);
+  const bill = computeBill();
+  const items = Object.values(STATE.cart);
 
-    const lines = [];
-    lines.push("🍽️ *Lotus & Fire – Website Order*");
-    lines.push("Order Type: *" + STATE.orderType.toUpperCase() + "*");
-    lines.push("");
+  const lines = [];
+  lines.push("🍽️ *Lotus & Fire – Website Order*");
+  lines.push("Order Type: *" + String(STATE.orderType || "").toUpperCase() + "*");
+  lines.push("");
 
-    items.forEach((it) => {
-      const tag = it.isOfferItem ? " (Offer)" : "";
-      lines.push("• " + it.name + tag + " — " + it.qty + " x " + money(it.price) + " = " + money(it.price * it.qty));
-    });
+  items.forEach((it) => {
+    const tag = it.isOfferItem ? " (Offer)" : "";
+    lines.push(
+      "• " +
+        it.name +
+        tag +
+        " — " +
+        it.qty +
+        " x " +
+        money(it.price) +
+        " = " +
+        money(it.price * it.qty)
+    );
+  });
 
-    lines.push("");
-    lines.push("Subtotal: " + money(bill.subTotal));
-    lines.push("Discount: -" + money(bill.discount));
-    lines.push("GST (5%): " + money(bill.gst));
-    lines.push("Delivery Fee: " + money(bill.deliveryFee));          // NEW
-    lines.push("*Total Payable: " + money(bill.grandTotal) + "*");   // UPDATED
-    lines.push("");
+  lines.push("");
+  lines.push("Subtotal: " + money(bill.subTotal));
+  lines.push("Discount: -" + money(bill.discount));
+  lines.push("GST (5%): " + money(bill.gst));
+  lines.push("Delivery Fee: " + money(bill.deliveryFee));
+  lines.push("*Total Payable: " + money(bill.grandTotal) + "*");
+  lines.push("");
 
-    const notes = qs("#order-notes")?.value?.trim() || "";
-    const nameAddr = qs("#order-name-address")?.value?.trim() || "";
+  // ✅ NEW: Phone & Payment (from STATE)
+  const phone = STATE?.customer?.phone || "";
+  const paymentMethod = STATE?.customer?.paymentMethod || "Cash";
 
-    if (notes) lines.push("Notes: " + notes);
-    if (nameAddr) lines.push("Name & Address: " + nameAddr);
+  if (phone) lines.push("Phone: " + phone);
+  lines.push("Payment Method: " + paymentMethod);
 
-    return lines.join("\n");
-  }
+  // Existing fields
+  const notes = qs("#order-notes")?.value?.trim() || "";
+  const nameAddr = qs("#order-name-address")?.value?.trim() || "";
+
+  if (notes) lines.push("Notes: " + notes);
+  if (nameAddr) lines.push("Name & Address: " + nameAddr);
+
+  return lines.join("\n");
+}
 
   function buildBookingMessage() {
     const name = qs("#bk-name")?.value?.trim() || "";
@@ -894,6 +935,23 @@ if (count === 0) {
     qs("#btn-whatsapp-contact")?.addEventListener("click", () => goWhatsApp("Hello! I want to enquire about Lotus & Fire."));
    function goWhatsAppOrder(orderText) {
 
+  // ✅ 0) Save order to Google Sheet (silent)
+  const bill = typeof computeBill === "function" ? computeBill() : {};
+  saveOrderToSheet({
+    orderId: "LF-" + Date.now(),
+    orderType: STATE?.orderType || "",
+    name: STATE?.customer?.name || "",
+    phone: STATE?.customer?.phone || "",
+    address: STATE?.customer?.address || "",
+    items: Object.values(STATE?.cart || {}).map(i => `${i.name} x${i.qty}`).join(", "),
+    subtotal: bill.subtotal ?? bill.subTotal ?? 0,
+    discount: bill.discount ?? 0,
+    gst: bill.gst ?? 0,
+    deliveryFee: bill.deliveryFee ?? 0,
+    total: bill.total ?? 0,
+    notes: STATE?.customer?.notes || ""
+  });
+
   // 1️⃣ Open WhatsApp
   window.open(buildWhatsAppUrl(orderText), "_blank");
 
@@ -904,7 +962,7 @@ if (count === 0) {
   localStorage.removeItem("lf_cart_v1");
   if (typeof saveCart === "function") saveCart();
 
-  // 4️⃣ FORCE clear cart UI (THIS WAS MISSING)
+  // 4️⃣ FORCE clear cart UI
   forceClearCartUI();
 
   // 5️⃣ Sync rest of UI
@@ -994,16 +1052,30 @@ if (count === 0) {
   });
 
     // WhatsApp order
-    qs("#btn-wa-order")?.addEventListener("click", () => {
-    if (cartCount() === 0) return alert("Cart is empty.");
-    const nameAddr = qs("#order-name-address")?.value?.trim() || "";
-    if (!nameAddr) return alert("Please enter Full Name & Address.");
+qs("#btn-wa-order")?.addEventListener("click", () => {
+  if (cartCount() === 0) return alert("Cart is empty.");
 
-    goWhatsAppOrder(buildOrderMessage());
+  // ✅ Phone validation (NEW)
+  const phone = (qs("#order-phone")?.value || "").replace(/\D/g, "").slice(0, 10);
+  if (phone.length !== 10) return alert("Please enter a valid 10-digit phone number.");
 
-    // ✅ clear cart AFTER opening WhatsApp
-    afterOrderCleanup();
-  });
+  // ✅ Payment method (NEW)
+  const paymentMethod =
+    document.querySelector('input[name="payment-method"]:checked')?.value || "Cash";
+
+  const nameAddr = qs("#order-name-address")?.value?.trim() || "";
+  if (!nameAddr) return alert("Please enter Full Name & Address.");
+
+  // ✅ Save to STATE (so buildOrderMessage/goWhatsAppOrder can use)
+  STATE.customer = STATE.customer || {};
+  STATE.customer.phone = phone;
+  STATE.customer.paymentMethod = paymentMethod;
+
+  goWhatsAppOrder(buildOrderMessage());
+
+  // ✅ clear cart AFTER opening WhatsApp
+  afterOrderCleanup();
+});
 
     // Booking form
     qs("#booking-form")?.addEventListener("submit", (e) => {

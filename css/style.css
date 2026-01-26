@@ -754,6 +754,20 @@ button:disabled {
   font-weight: 600;
 }
 
+.pay-row {
+  display: flex;
+  gap: 14px;
+  margin: 6px 0 2px;
+}
+
+.pay-opt {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+}
+
+
 
 
 

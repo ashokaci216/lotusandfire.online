@@ -350,8 +350,31 @@
         <label class="lbl">Notes (optional)</label>
         <textarea id="order-notes" rows="2" placeholder="Any special request..."></textarea>
 
+        <label class="lbl">Phone Number</label>
+        <input
+          id="order-phone"
+          type="tel"
+          inputmode="numeric"
+          maxlength="10"
+          placeholder="10-digit mobile number"
+          required
+        />
+
         <label class="lbl">Full Name & Address</label>
         <textarea id="order-name-address" rows="3" placeholder="Example: Ashok, Flat 101, Sector 15, Belapur" required></textarea>
+
+        <label class="lbl">Payment Method</label>
+        <div class="pay-row">
+         <label class="pay-opt">
+           <input type="radio" name="payment-method" value="Cash" checked />
+           <span>Cash</span>
+          </label>
+
+         <label class="pay-opt">
+           <input type="radio" name="payment-method" value="UPI" />
+           <span>UPI</span>
+          </label>
+        </div>
 
         <button id="btn-wa-order" class="btn primary full">Send Order on WhatsApp</button>
         <button id="btn-clear-cart" class="btn full">Clear Cart</button>
