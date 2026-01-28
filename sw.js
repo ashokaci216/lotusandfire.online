@@ -1,4 +1,4 @@
-const CACHE_NAME = "lotus-fire-v26"; // ✅ bump this on every release
+const CACHE_NAME = "lotus-fire-v27"; // ✅ bump this on every release
 
 const ASSETS = [
   "./",
