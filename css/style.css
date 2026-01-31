@@ -251,6 +251,50 @@ button:disabled {
 .offer-title{font-weight:700;margin-bottom:6px}
 .offer-foot{margin-top:10px;color:var(--muted);font-size:12px}
 
+/* =============================
+   Greg-style Offer Upgrade
+   (Overrides only offer section)
+   ============================= */
+
+.offer-box{
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+.offer-block{
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-left: 6px solid rgba(255,190,90,0.85);
+}
+
+.offer-title{
+  font-weight: 800;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.offer-box ul{
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+
+.offer-box li{
+  margin: 6px 0;
+  line-height: 1.35;
+  color: rgba(255,255,255,0.88);
+}
+
+.offer-foot{
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.70);
+}
+
 .grid{
   display:grid;
   grid-template-columns:1fr;
@@ -766,6 +810,67 @@ button:disabled {
   align-items: center;
   cursor: pointer;
 }
+
+/* =============================
+   Contact Card – Premium polish
+   Targets ONLY the left card in Contact section
+   ============================= */
+
+#contact .two-col > .card:first-child .muted{
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  line-height: 1.35;
+
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* remove forced <br> inside address */
+#contact .two-col > .card:first-child .muted br{
+  display: none;
+}
+
+/* Make email link look premium */
+#contact .two-col > .card:first-child a[href^="mailto:"]{
+  color: rgba(255,255,255,0.92);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(255,255,255,0.25);
+}
+#contact .two-col > .card:first-child a[href^="mailto:"]:hover{
+  border-bottom-color: rgba(255,255,255,0.55);
+}
+
+/* Buttons row polish */
+#contact .two-col > .card:first-child .btnrow{
+  margin-top: 14px;
+  gap: 10px;
+}
+#contact .two-col > .card:first-child .btn{
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+/* Optional: add same left accent strip like offers */
+#contact .two-col > .card:first-child{
+  position: relative;
+}
+#contact .two-col > .card:first-child::after{
+  content:"";
+  position:absolute;
+  left: 12px;
+  top: 58px;            /* starts below the h3 */
+  bottom: 16px;
+  width: 4px;
+  border-radius: 999px;
+  background: rgba(255,190,90,0.85);
+  opacity: 0.9;
+  pointer-events:none;
+}
+
 
 
 
